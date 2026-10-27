@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Starling Murmuration — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,hash}=Art;
+Art.mount({name:'Starling Murmuration',slug:'murmuration',perspective:'wide · flocking at dusk',build:(view,AR)=>{
+ return function(u,v,t){
+  let c=mixC([74,84,132],[244,176,124],smooth(0,1,v));
+  c=mixC(c,[252,206,154],smooth(0.55,0.96,v)*0.4);
+  const sd=Math.hypot(u-AR*0.72,v-0.82);c=mixC(c,[255,224,176],smooth(0.42,0,sd)*0.4);
+  const cs=[[AR*(0.5+0.26*Math.sin(t*0.5)),0.44+0.18*Math.cos(t*0.42),0.17],
+            [AR*(0.5+0.22*Math.sin(t*0.53+2.5)),0.4+0.2*Math.sin(t*0.6),0.13],
+            [AR*(0.5+0.3*Math.cos(t*0.33)),0.5+0.12*Math.cos(t*0.7+1),0.12]];
+  let D=0;for(const k of cs){const dx=u-k[0],dy=v-k[1];D+=Math.exp(-(dx*dx+dy*dy)/(k[2]*k[2]));}
+  const thr=smooth(0.3,1.15,D);
+  const bn=hash(Math.floor(u*170+Math.sin(t*2)*1),Math.floor(v*170));
+  if(bn<thr*0.5)c=mixC(c,[26,24,32],clamp(thr,0,1)*0.92);
+  return c;
+ };
+}});
+</script></body></html>
