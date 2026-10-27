@@ -1,0 +1,6 @@
+# videos are heavy — the README gallery is stills only ("stored only if need be")
+*.webm
+*.mp4
+media/_vid/
+__pycache__/
+.DS_Store
