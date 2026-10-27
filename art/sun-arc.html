@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Sun Arc — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise,fbm,hash}=Art;
+Art.mount({name:'Sun Arc',slug:'sun-arc',perspective:'side · wide horizon',build:(view,AR)=>{
+ const GY=0.82;
+ return function(u,v,t){
+  const p=fract(t/12.0),sunx=p*AR,sunh=Math.sin(p*Math.PI),suny=GY-sunh*0.64;
+  const day=[132,194,236],dusk=[248,158,92],night=[22,28,52];
+  const sky=sunh>0.16?mixC(dusk,day,smooth(0.16,0.62,sunh)):mixC(night,dusk,smooth(-0.12,0.16,sunh));
+  const top=mixC(sky,[32,38,78],0.45*(1-clamp(sunh,0,1)));
+  let c=mixC(top,sky,smooth(0,GY,v));
+  if(sunh<0.12&&v<GY&&hash(Math.floor(u*70),Math.floor(v*70))>0.986)c=mixC(c,[255,255,255],clamp(0.12-sunh,0,1)*6);
+  const sd=Math.hypot(u-sunx,v-suny);
+  c=mixC(c,[255,238,196],smooth(0.55,0,sd)*clamp(sunh+0.25,0,1)*0.6);
+  if(sd<0.052)c=mixC([255,250,228],[255,206,138],smooth(0,0.052,sd));
+  const cl=fbm(u*2.0+p*0.6,v*3.0+1);c=mixC(c,[255,252,246],smooth(0.64,0.82,cl)*smooth(GY,0.08,v)*0.55*clamp(sunh+0.3,0,1));
+  if(v>=GY)c=mixC([28,46,38],[10,18,18],smooth(GY,1,v));
+  const hill=GY-0.028*Math.sin(u*3.5+1)-0.02;if(v>hill&&v<GY)c=mixC(c,[20,32,28],1);
+  return c;
+ };
+}});
+</script></body></html>
