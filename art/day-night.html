@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Day to Night — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise,hash}=Art;
+Art.mount({name:'Day to Night',slug:'day-night',perspective:'side · day-night cycle',build:(view,AR)=>{
+ const GY=0.78;
+ return function(u,v,t){
+  const p=fract(t/13.0),sunh=Math.sin(p*Math.PI*2)*0.5+ (p<0.5?0.5:-0.5)*0; // smoother below
+  const s=Math.sin(p*Math.PI*2); const isNight=s<0;
+  const day=[120,186,230],dusk=[246,150,96],night=[18,22,46];
+  let sky = s>0.25?day : s>0? mixC(dusk,day,smooth(0,0.25,s)) : mixC(night,dusk,smooth(-0.25,0,s));
+  let c=mixC(mixC(sky,[22,28,64],0.45*clamp(-s+0.3,0,1)),sky,smooth(0,GY,v));
+  if(isNight&&v<GY&&hash(Math.floor(u*72),Math.floor(v*72))>0.985)c=mixC(c,[255,255,255],clamp(-s,0,1)*4.5);
+  const bx=p*AR;
+  if(s>0){const sd=Math.hypot(u-bx,v-(GY-s*0.62));if(sd<0.05)c=[255,244,206];c=mixC(c,[255,236,196],smooth(0.45,0,sd)*s*0.5);}
+  else{const mx=fract(p+0.5)*AR,md=Math.hypot(u-mx,v-(GY-(-s)*0.62));if(md<0.04)c=[232,236,246];c=mixC(c,[200,210,235],smooth(0.3,0,md)*(-s)*0.3);}
+  if(v>=GY)c=mixC([44,70,46],[22,36,28],smooth(GY,1,v));
+  const tx=AR*0.72;
+  if(Math.abs(u-tx)<0.016&&v>GY-0.12&&v<GY)c=[22,32,24];
+  if(Math.hypot(u-tx,v-(GY-0.14))<0.07)c=mixC([30,52,32],[16,28,18],vnoise(u*20,v*20));
+  const hx=AR*0.3;
+  if(Math.abs(u-hx)<0.085&&v>GY-0.1&&v<GY)c=[46,38,42];
+  if(v>GY-0.165&&v<GY-0.1){const w=0.1*smooth(GY-0.165,GY-0.1,v);if(Math.abs(u-hx)<w)c=[74,46,40];}
+  if(Math.abs(u-(hx+0.035))<0.02&&Math.abs(v-(GY-0.05))<0.022)c=isNight?[252,212,96]:[78,96,124];
+  if(Math.abs(u-(hx-0.035))<0.02&&Math.abs(v-(GY-0.05))<0.022)c=isNight?[252,212,96]:[78,96,124];
+  return c;
+ };
+}});
+</script></body></html>
