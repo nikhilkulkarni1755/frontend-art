@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Deer Jump — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+function seg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay;const h=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1e-6),0,1);return Math.hypot(px-(ax+dx*h),py-(ay+dy*h));}
+Art.mount({name:'Deer Jump',slug:'deer-jump',perspective:'side · arc of the leap',build:(view,AR)=>{
+ const GY=0.76;
+ return function(u,v,t){
+  let c=mixC([150,196,214],[222,236,228],smooth(0,GY,v));
+  c=mixC(c,[250,240,214],smooth(GY*0.6,GY,v)*0.4);
+  // distant treeline
+  const tl=GY-0.08-vnoise(u*6,9)*0.05; if(v>tl&&v<GY)c=mixC(c,[64,110,74],smooth(tl,tl+0.03,v)*0.6);
+  if(v>=GY)c=mixC([104,150,78],[66,106,54],smooth(GY,1,v));
+  // log obstacle
+  if(((u-AR*0.5)/0.1)**2+((v-(GY-0.02))/0.035)**2<1){c=mixC([120,86,54],[86,58,34],smooth(GY-0.05,GY+0.01,v));
+    if(Math.hypot(u-(AR*0.5-0.1),v-(GY-0.02))<0.03)c=[150,112,74];}
+  const p=fract(t/4.2),x=mix(-0.1,AR+0.1,p),jump=4*p*(1-p),y=GY-0.08-jump*0.34,tuck=smooth(0.2,0.5,jump);
+  // legs tuck as it rises
+  const fl=0.07-tuck*0.045;
+  for(const sgn of [1,-1]){const hx=x+0.055*sgn,hy=y+0.03;
+    if(seg(u,v,hx,hy,hx+0.02*sgn,hy+fl)<0.009)c=[120,86,56];
+    if(seg(u,v,hx+0.02*sgn,hy+fl,hx+0.045*sgn,hy+fl*0.6)<0.008)c=[110,78,50];}
+  // body
+  if(((u-x)/0.085)**2+((v-y)/0.042)**2<1){c=(v-y)>0.012?[224,206,176]:[160,116,76];}
+  // neck + head up-forward
+  if(seg(u,v,x+0.07,y-0.01,x+0.12,y-0.07)<0.022)c=[162,118,78];
+  if(((u-(x+0.135))/0.03)**2+((v-(y-0.082))/0.026)**2<1){c=[166,122,80];
+    if(Math.hypot(u-(x+0.15),v-(y-0.09))<0.005)c=[20,16,12];}
+  // antlers
+  if(seg(u,v,x+0.13,y-0.1,x+0.12,y-0.15)<0.005)c=[120,96,64];
+  if(seg(u,v,x+0.125,y-0.13,x+0.155,y-0.16)<0.004)c=[120,96,64];
+  if(seg(u,v,x+0.14,y-0.1,x+0.17,y-0.14)<0.005)c=[120,96,64];
+  // tail
+  if(Math.hypot(u-(x-0.085),v-(y-0.015))<0.016)c=[236,224,204];
+  return c;
+ };
+}});
+</script></body></html>
