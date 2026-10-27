@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Fireworks — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,hash}=Art;
+const SH=[{x:0.3,col:[255,120,120],per:3.1,off:0.0,ax:0.30},{x:0.62,col:[140,200,255],per:3.7,off:0.4,ax:0.27},
+ {x:0.5,col:[255,222,120],per:4.3,off:0.75,ax:0.22},{x:0.8,col:[206,150,255],per:3.4,off:0.2,ax:0.30}];
+Art.mount({name:'Fireworks',slug:'fireworks',perspective:'side · night skyline',build:(view,AR)=>{
+ const skyY=0.82;
+ return function(u,v,t){
+  let c=mixC([16,18,42],[30,26,58],smooth(0,1,v));c=mixC(c,[8,8,20],smooth(0.5,1,v)*0.4);
+  if(v<skyY&&hash(Math.floor(u*72),Math.floor(v*72))>0.99)c=mixC(c,[220,220,240],0.6);
+  const bi=Math.floor(u*22),bh=skyY-hash(bi,2)*0.12;
+  if(v>bh)c=mixC(c,[9,11,22],1);
+  if(v>bh&&v<skyY&&hash(bi,5)>0.5&&fract(v*64)<0.5&&fract(u*70)<0.5)c=[200,180,92];
+  for(const S of SH){const ph=fract(t/S.per+S.off),cx=S.x*AR,apexY=0.2+hash(S.x*13,1)*0.1;
+    if(ph<0.28){const q=ph/0.28,ry=mix(skyY,apexY,q),d=Math.hypot(u-cx,v-ry);
+      if(d<0.006)c=[255,240,200];if(d<0.02&&v>ry)c=mixC(c,[255,200,120],smooth(0.02,0,d)*0.5);}
+    else{const q=(ph-0.28)/0.72,R=S.ax*smooth(0,0.5,q),fade=1-smooth(0.45,1,q);
+      for(let k=0;k<22;k++){const a=k/22*6.283,sx=cx+Math.cos(a)*R,sy=apexY+Math.sin(a)*R+0.32*q*q;
+        if(Math.hypot(u-sx,v-sy)<0.006)c=mixC(c,q>0.6?mixC(S.col,[255,255,255],0.3):S.col,fade);}
+      c=mixC(c,S.col,smooth(R+0.04,0,Math.hypot(u-cx,v-apexY))*fade*0.08);}}
+  return c;
+ };
+}});
+</script></body></html>
