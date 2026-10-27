@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Motocross Jump — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+function seg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay;const h=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1e-6),0,1);return Math.hypot(px-(ax+dx*h),py-(ay+dy*h));}
+Art.mount({name:'Motocross Jump',slug:'motocross',perspective:'side · ramp L→R',build:(view,AR)=>{
+ const GY=0.80;
+ return function(u,v,t){
+  let c=mixC([120,164,206],[206,224,234],smooth(0,GY,v));
+  c=mixC(c,[255,255,255],smooth(0.6,0.82,vnoise(u*2.2+t*0.03,v*2.6+3))*smooth(GY,0.1,v)*0.7);
+  if(v>=GY)c=mixC([156,120,80],[104,78,50],smooth(GY,1,v));
+  // ramp
+  if(u>0.04&&u<0.3){const ry=GY-clamp((u-0.04)/0.24,0,1)*0.17;if(v>ry)c=mixC([124,94,60],[92,66,42],smooth(ry,GY,v));}
+  const p=fract(t/3.6);let x,y,rot;
+  if(p<0.3){const q=p/0.3;x=mix(0.07,0.29,q);y=GY-q*0.17-0.035;rot=-0.6;}
+  else{const q=(p-0.3)/0.7;x=mix(0.29,AR+0.12,q);y=(GY-0.205)-4*q*(1-q)*0.3;rot=-0.6+q*1.6;}
+  const cs=Math.cos(rot),sn=Math.sin(rot),lx=(u-x)*cs+(v-y)*sn,ly=-(u-x)*sn+(v-y)*cs;
+  for(const wx of[-0.052,0.052]){const d=Math.hypot(lx-wx,ly+0.028);if(d<0.03&&d>0.015)c=[26,26,30];if(d<0.015)c=[150,150,156];
+    if(d<0.03&&d>0.015&&fract(Math.atan2(ly+0.028,lx-wx)/6.28*8+ (wx>0?x:x)*4)<0.5)c=[60,60,66];}
+  if(seg(lx,ly,-0.052,-0.028,0.052,-0.028)<0.009)c=[210,66,46];
+  if(seg(lx,ly,0.0,-0.028,0.04,-0.06)<0.008)c=[36,40,48];
+  if(seg(lx,ly,-0.03,-0.06,0.02,-0.1)<0.016)c=[36,92,172];
+  if(Math.hypot(lx-0.035,ly+0.115)<0.018)c=[224,70,58];
+  if(Math.hypot(lx-0.047,ly+0.112)<0.006)c=[40,44,54];
+  if(seg(lx,ly,-0.03,-0.06,-0.05,-0.02)<0.009)c=[36,92,172];
+  if(seg(lx,ly,0.0,-0.07,0.05,-0.055)<0.008)c=[30,34,42];
+  return c;
+ };
+}});
+</script></body></html>
