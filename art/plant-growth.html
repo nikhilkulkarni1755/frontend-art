@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Plant Growth — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+function seg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay;const h=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1e-6),0,1);return Math.hypot(px-(ax+dx*h),py-(ay+dy*h));}
+Art.mount({name:'Plant Growth',slug:'plant-growth',perspective:'side · seed → bloom → seed',build:(view,AR)=>{
+ const GY=0.84,cx=AR*0.5;
+ return function(u,v,t){
+  let c=mixC([152,202,226],[226,240,232],smooth(0,GY,v));
+  c=mixC(c,[250,240,214],smooth(GY*0.6,GY,v)*0.35);
+  if(v>=GY)c=mixC([112,80,52],[74,52,34],smooth(GY,1,v));
+  const p=fract(t/9.0),stage=Math.sin(p*Math.PI),H=0.02+stage*0.46,topY=GY-H;
+  const sway=0.012*Math.sin(t*1.4)*stage;
+  if(v>topY&&v<GY){const bend=sway*((GY-v)/Math.max(H,0.01));if(Math.abs(u-(cx+bend))<0.006)c=[70,134,56];}
+  for(let i=1;i<=3;i++){const frac=i/4,ny=GY-H*frac,ap=smooth(frac*0.55,frac*0.55+0.16,stage);
+    if(ap>0.05){const side=i%2?1:-1,bend=sway*((GY-ny)/Math.max(H,0.01));
+      if(seg(u,v,cx+bend,ny,cx+bend+side*0.055*ap,ny-0.032*ap)<0.013*ap)c=[86,152,62];}}
+  if(stage>0.58){const fo=smooth(0.58,0.86,stage),fy=topY,bend=sway;
+    for(let k=0;k<7;k++){const a=k/7*6.283+t*0.5;const fx=cx+bend+Math.cos(a)*0.032*fo,fyy=fy+Math.sin(a)*0.032*fo;
+      if(Math.hypot(u-fx,v-fyy)<0.019*fo)c=[242,152,60];}
+    if(Math.hypot(u-(cx+bend),v-fy)<0.017*fo)c=[250,208,92];}
+  if(stage<0.18&&p>0.5&&Math.hypot(u-cx,v-(GY+0.02))<0.012)c=[96,70,42];
+  return c;
+ };
+}});
+</script></body></html>
