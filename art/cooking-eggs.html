@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Cooking Eggs — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+function seg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay;const h=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1e-6),0,1);return Math.hypot(px-(ax+dx*h),py-(ay+dy*h));}
+Art.mount({name:'Cooking Eggs',slug:'cooking-eggs',perspective:'top-down · frying pan',build:(view,AR)=>{
+ return function(u,v,t){
+  let c=mixC([34,34,40],[18,18,22],smooth(0,1,v));
+  if(fract(u*9)<0.5&&fract(v*9)<0.5)c=mixC(c,[26,26,32],0.4);
+  const cx=AR*0.5+Math.sin(t*2.0)*0.018, cy=0.5+Math.cos(t*2.4)*0.012, R=view==='mobile'?0.22:0.34;
+  if(seg(u,v,cx+R*0.95,cy,cx+R*1.6,cy)<0.035)c=mixC([44,44,48],[26,26,30],0.5);
+  const d=Math.hypot(u-cx,v-cy);
+  if(d<R){c=mixC([64,64,70],[40,40,46],d/R);
+    c=mixC(c,[128,128,138],smooth(0.62,1,vnoise(u*16+t,v*16))*0.16);
+    const e1x=cx+Math.sin(t*1.7)*0.09,e1y=cy+Math.cos(t*1.3)*0.07,w1=0.15*(0.9+0.12*vnoise(u*22,v*22));
+    if(Math.hypot(u-e1x,v-e1y)<w1){c=mixC([250,248,240],[238,236,224],vnoise(u*30,v*30)*0.4);
+      if(Math.hypot(u-e1x,v-e1y)<0.045){c=[246,190,42];if(Math.hypot(u-(e1x-0.012),v-(e1y-0.012))<0.016)c=[252,214,96];}}
+    const e2x=cx-Math.sin(t*1.9+1)*0.1,e2y=cy-Math.cos(t*1.5+2)*0.08,w2=0.12*(0.9+0.12*vnoise(u*22+9,v*22));
+    if(Math.hypot(u-e2x,v-e2y)<w2){c=mixC([250,248,240],[236,234,222],vnoise(u*30+3,v*30)*0.4);
+      if(Math.hypot(u-e2x,v-e2y)<0.038){c=[246,196,50];if(Math.hypot(u-(e2x-0.01),v-(e2y-0.01))<0.014)c=[252,218,104];}}
+    if(d>R-0.022)c=[74,74,82];
+  }
+  return c;
+ };
+}});
+</script></body></html>
