@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Penguin Waddle — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+Art.mount({name:'Penguin Waddle',slug:'penguin-waddle',perspective:'front ¾ · weight shift',build:(view,AR)=>{
+ const GY=0.80;
+ return function(u,v,t){
+  let c=mixC([176,206,230],[226,238,246],smooth(0,GY,v));
+  if(v>=GY)c=mixC([236,244,250],[198,214,230],smooth(GY,1,v));
+  // drifting snow
+  for(let i=0;i<5;i++){const sx=fract(0.12+i*0.19+vnoise(i*3,1)*0.3)*AR,sy=fract(i*0.23+t*0.18+vnoise(i*7,2));if(Math.hypot(u-sx,v-sy)<0.006)c=[255,255,255];}
+  const cx=AR*0.5, rock=Math.sin(t*2.6), lean=rock*0.05, bob=Math.abs(Math.sin(t*2.6))*0.012;
+  const bx=cx+lean, by=GY-0.14-bob;
+  // feet alternate
+  const fph=t*2.6;
+  for(const sgn of[1,-1]){const up=Math.max(0,Math.sin(fph)*sgn);const fy=GY-0.005-up*0.02;
+    if(((u-(bx+0.03*sgn))/0.028)**2+((v-fy)/0.012)**2<1)c=[236,160,42];}
+  // body (black)
+  if(((u-bx)/0.072)**2+((v-by)/0.11)**2<1){c=[34,36,46];
+    // white belly
+    if(((u-bx)/0.05)**2+((v-(by+0.012))/0.09)**2<1)c=[244,246,250];
+    // flippers at sides swinging
+    }
+  // flippers
+  for(const sgn of[1,-1]){const sw=Math.sin(fph+(sgn>0?0:Math.PI))*0.02;
+    if(seg(u,v,bx+0.065*sgn,by-0.02,bx+0.085*sgn+sw,by+0.06)<0.016)c=[34,36,46];}
+  // head
+  if(((u-bx)/0.05)**2+((v-(by-0.1))/0.052)**2<1){c=[34,36,46];
+    // eyes
+    for(const sgn of[1,-1])if(Math.hypot(u-(bx+0.018*sgn),v-(by-0.105))<0.007)c=[250,250,250];
+    for(const sgn of[1,-1])if(Math.hypot(u-(bx+0.018*sgn),v-(by-0.103))<0.0035)c=[16,16,20];
+    // beak
+    if(((u-bx)/0.014)**2+((v-(by-0.082))/0.016)**2<1)c=[236,150,40];}
+  return c;
+ };
+ function seg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay;const h=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1e-6),0,1);return Math.hypot(px-(ax+dx*h),py-(ay+dy*h));}
+}});
+</script></body></html>
