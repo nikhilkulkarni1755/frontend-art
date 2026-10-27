@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Aerial Garden — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise,hash}=Art;
+Art.mount({name:'Aerial Garden',slug:'aerial-garden',perspective:'aerial · tended field',build:(view,AR)=>{
+ const ROWS=14;
+ return function(u,v,t){
+  let c=mixC([124,88,56],[94,66,42],vnoise(u*9,v*9)*0.6+0.2);
+  const row=fract(v*ROWS); if(row<0.12)c=mixC(c,[66,46,30],0.6);
+  const mo=fract(t*0.06),md=Math.abs(u/AR-mo); c=mixC(c,[70,50,34],smooth(0.07,0,md)*0.45);
+  if(row>0.25&&row<0.92){const colW=0.05,ci=Math.floor(u/colW),ri=Math.floor(v*ROWS);
+    const px=(ci+0.5)*colW,py=(ri+0.58)/ROWS,ph=fract(t/11 - ci*0.012);
+    const grow=smooth(0,0.45,ph)*smooth(1.0,0.62,ph),sz=0.006+grow*0.017,d=Math.hypot(u-px,v-py);
+    if(d<sz){c=mixC([68,140,64],[42,102,52],hash(ci,ri));if(d<sz*0.5)c=mixC(c,[128,186,92],0.55);}}
+  return c;
+ };
+}});
+</script></body></html>
