@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Campfire — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise,hash}=Art;
+function seg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay;const h=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1e-6),0,1);return Math.hypot(px-(ax+dx*h),py-(ay+dy*h));}
+Art.mount({name:'Campfire',slug:'campfire',perspective:'side · flame & embers',build:(view,AR)=>{
+ const GY=0.82,cx=AR*0.5;
+ return function(u,v,t){
+  let c=mixC([16,18,34],[10,10,22],smooth(0,1,v));
+  if(v<GY&&hash(Math.floor(u*72),Math.floor(v*72))>0.99)c=mixC(c,[200,200,220],0.5);
+  if(v>=GY)c=mixC([42,30,26],[16,12,12],smooth(GY,1,v));
+  c=mixC(c,[210,110,40],smooth(0.32,0,Math.hypot(u-cx,(v-GY)*1.7))*smooth(GY+0.12,GY-0.22,v)*0.32);
+  if(seg(u,v,cx-0.08,GY,cx+0.06,GY-0.028)<0.016)c=mixC([98,66,42],[62,40,26],vnoise(u*30,v*30));
+  if(seg(u,v,cx+0.08,GY,cx-0.06,GY-0.028)<0.016)c=mixC([104,70,44],[64,42,26],vnoise(u*30+5,v*30));
+  const base=GY-0.02,height=0.24,fx=u-cx;
+  if(v<base&&v>base-height){const hv=(base-v)/height,sway=0.03*Math.sin(t*3+v*18);
+    const w=(0.075*(1-hv)+0.008)*(1+0.3*vnoise(u*22,v*22));
+    const fl=smooth(w,0,Math.abs(fx-sway))*(1-hv*0.25)*(0.7+0.5*vnoise(u*15+3,v*15-t*7));
+    if(fl>0.16){const col=fl>0.76?[255,246,186]:fl>0.5?[255,188,70]:[228,86,34];c=mixC(c,col,clamp(fl,0,1));}}
+  for(let i=0;i<12;i++){const age=fract(t*0.32+i*0.083),ex=cx+(hash(i,1)-0.5)*0.13+Math.sin(t*2+i)*0.025*age,ey=base-age*0.38;
+    if(Math.hypot(u-ex,v-ey)<0.004)c=mixC(c,[255,172,82],(1-age));}
+  return c;
+ };
+}});
+</script></body></html>
