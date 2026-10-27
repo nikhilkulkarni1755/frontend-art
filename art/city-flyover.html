@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>City Flyover — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise,fbm,hash}=Art;
+Art.mount({name:'City Flyover',slug:'city-flyover',perspective:'aerial · scrolling map',build:(view,AR)=>{
+ const cs=view==='mobile'?0.16:0.13;
+ return function(u,v,t){
+  const wx=u+t*0.05, wy=v+t*0.03;
+  const cx=Math.floor(wx/cs),cy=Math.floor(wy/cs),fx=wx/cs-cx,fy=wy/cs-cy,h=hash(cx,cy);
+  let c; const road=0.16;
+  if(fx<road||fy<road){c=[52,56,64];
+    if(fx<road&&Math.abs(fy-0.5)<0.03&&fract(wy*7)<0.5)c=[150,150,120];
+    if(fy<road&&Math.abs(fx-0.5)<0.03&&fract(wx*7)<0.5)c=[150,150,120];}
+  else if(h<0.13){c=mixC([38,108,150],[26,78,118],hash(cx+9,cy));
+    c=mixC(c,[120,180,200],smooth(0.6,1,Math.sin(wx*30+t*2)*Math.sin(wy*26))*0.12);}
+  else if(h<0.33){c=mixC([74,132,74],[52,104,58],hash(cx+3,cy*2));
+    if(hash(cx*5+Math.floor(fx*4),cy*5+Math.floor(fy*4))>0.62)c=mixC(c,[40,86,46],0.6);}
+  else{const bh=hash(cx+1,cy+7),g=96+bh*118;c=[g*0.92,g*0.93,g*1.0];
+    if(fx>1-road-0.08)c=mixC(c,[18,20,26],0.55);
+    if(fy>1-road-0.08)c=mixC(c,[18,20,26],0.35);
+    if(hash(cx*7,cy*7)>0.5&&Math.abs(fx-0.5)<0.14&&Math.abs(fy-0.5)<0.14)c=mixC(c,[58,62,70],0.6);
+    if(bh>0.8&&Math.hypot(fx-0.5,fy-0.5)<0.08)c=mixC(c,[200,120,90],0.5);}
+  const cl=fbm(u*1.4-t*0.12,v*1.4+1);c=mixC(c,[238,243,250],smooth(0.74,0.92,cl)*0.28);
+  return c;
+ };
+}});
+</script></body></html>
