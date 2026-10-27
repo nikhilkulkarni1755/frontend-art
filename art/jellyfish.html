@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Jellyfish Drift — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+const J=[{x:0.26,col:[158,124,224],ph:0,sp:1.4,sz:0.10},{x:0.56,col:[120,204,214],ph:2,sp:1.1,sz:0.082},
+ {x:0.82,col:[232,142,192],ph:4,sp:1.6,sz:0.07},{x:0.42,col:[134,162,232],ph:1,sp:1.25,sz:0.062}];
+Art.mount({name:'Jellyfish Drift',slug:'jellyfish',perspective:'side · vertical drift',build:(view,AR)=>{
+ return function(u,v,t){
+  let c=mixC([20,42,74],[3,9,26],smooth(0,1,v));
+  c=mixC(c,[50,100,140],smooth(0.6,1,Math.sin(u*7+1)*Math.sin(v*2.2))*smooth(1,0,v)*0.08);
+  for(const j of J){const cx=j.x*AR+0.03*Math.sin(t*0.3+j.ph),cy=0.42+0.22*Math.sin(t*0.24+j.ph);
+    const pulse=0.5+0.5*Math.sin(t*j.sp+j.ph),bw=j.sz*(0.82+pulse*0.32),bh=j.sz*(0.7+(1-pulse)*0.45);
+    const dx=u-cx,dy=v-cy;
+    c=mixC(c,j.col,smooth(bw*1.9,0,Math.hypot(dx,dy*0.7))*0.12);
+    if(dy<0.006&&(dx*dx)/(bw*bw)+(dy*dy)/(bh*bh)<1){c=mixC(c,j.col,0.82);
+      c=mixC(c,[255,255,255],smooth(bw*0.45,0,Math.abs(dx))*0.22);
+      if(dy>-bh*0.25)c=mixC(c,[255,255,255],0.1);}
+    if(dy>0&&dy<j.sz*3.2&&Math.abs(dx)<bw*1.1){for(let k=-2;k<=2;k++){const tx=cx+k*bw*0.32+0.018*Math.sin(dy*22+t*2.2+k);
+      if(Math.abs(u-tx)<0.0035)c=mixC(c,j.col,(1-dy/(j.sz*3.2))*0.7);}}}
+  return c;
+ };
+}});
+</script></body></html>
