@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Plane Takeoff — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise,fbm}=Art;
+function seg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay;const h=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1e-6),0,1);return Math.hypot(px-(ax+dx*h),py-(ay+dy*h));}
+Art.mount({name:'Plane Takeoff',slug:'plane-takeoff',perspective:'side · left→right',build:(view,AR)=>{
+ const GY=0.74;
+ return function(u,v,t){
+  let c=mixC([118,168,222],[210,230,244],smooth(0,GY,v));
+  c=mixC(c,[252,236,206],smooth(GY*0.55,GY,v)*0.55);
+  if(v<GY){const cl=fbm(u*2.1+t*0.04,v*2.8+2.0);c=mixC(c,[255,255,255],smooth(0.60,0.82,cl)*smooth(GY,GY-0.3,v)*0.85);}
+  if(v>=GY){
+   c=mixC([92,150,76],[56,104,52],smooth(GY,1,v));
+   if(v>GY+0.02&&v<GY+0.16){c=[92,94,100];if(Math.abs(v-(GY+0.09))<0.013&&fract(u*7+t*1.8)<0.5)c=[236,208,84];}
+  }
+  const p=fract(t/8.0),x=mix(-0.22,AR+0.22,p),climb=smooth(0.40,0.96,p),y=GY-0.03-climb*0.52,pitch=climb*0.22;
+  const cs=Math.cos(pitch),sn=Math.sin(pitch),lx=(u-x)*cs+(v-y)*sn,ly=-(u-x)*sn+(v-y)*cs;
+  if(seg(lx,ly,-0.085,0,0.07,0)<0.023){c=ly<-0.004?[208,217,228]:[238,241,247];if(Math.abs(ly)<0.0065)c=[64,118,212];
+    const wx=fract((lx+0.082)*22);if(ly>-0.012&&ly<0.003&&lx<0.03&&lx>-0.07&&wx<0.42)c=[44,56,76];}
+  if(Math.hypot(lx-0.072,ly)<0.02)c=[64,118,212];
+  if(seg(lx,ly,-0.085,0,-0.108,-0.058)<0.013)c=[64,118,212];
+  if(seg(lx,ly,-0.07,0.002,-0.11,0.012)<0.009)c=[226,231,240];
+  if(seg(lx,ly,-0.012,0.004,-0.078,0.056)<0.013)c=[194,203,216];
+  if(seg(lx,ly,-0.012,0.004,0.032,0.05)<0.012)c=[212,219,230];
+  return c;
+ };
+}});
+</script></body></html>
