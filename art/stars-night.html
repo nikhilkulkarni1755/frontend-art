@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Night Sky — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise,fbm,hash}=Art;
+function seg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay;const h=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1e-6),0,1);return Math.hypot(px-(ax+dx*h),py-(ay+dy*h));}
+Art.mount({name:'Night Sky',slug:'stars-night',perspective:'upward · slow rotation',build:(view,AR)=>{
+ return function(u,v,t){
+  let c=mixC([12,16,38],[20,24,54],smooth(0,1,v));
+  c=mixC(c,[6,8,22],smooth(0.55,1,v)*0.5);
+  const ang=t*0.03,cx=AR*0.5,cy=0.42,dx=u-cx,dy=v-cy;
+  const ru=cx+dx*Math.cos(ang)-dy*Math.sin(ang),rv=cy+dx*Math.sin(ang)+dy*Math.cos(ang);
+  const mw=fbm(ru*3.0,rv*3.0+2);c=mixC(c,[96,104,156],smooth(0.58,0.86,mw)*0.2);
+  const N=52,gx=Math.floor(ru*N),gy=Math.floor(rv*N),hx=hash(gx,gy);
+  if(hx>0.89){const sx=(gx+hash(gx+1,gy))/N,sy=(gy+hash(gx,gy+1))/N,d=Math.hypot(ru-sx,rv-sy);
+    const tw=0.55+0.45*Math.sin(t*3+hx*40);c=mixC(c,hx>0.97?[200,220,255]:[255,255,246],clamp(smooth(0.011,0,d)*tw*(0.5+hx),0,1));}
+  const sp=fract(t/7.0);
+  if(sp<0.07){const q=sp/0.07,mx=0.2+q*0.55*AR/1.5,my=0.18+q*0.22,d=seg(u,v,mx,my,mx-0.06,my-0.025);if(d<0.004)c=mixC(c,[255,255,255],(1-q)*0.9);}
+  return c;
+ };
+}});
+</script></body></html>
