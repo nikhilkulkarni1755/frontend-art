@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Ocean Waves — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+Art.mount({name:'Ocean Waves',slug:'ocean-waves',perspective:'side ¾ · break & recede',build:(view,AR)=>{
+ const HOR=0.40,SAND=0.86;
+ return function(u,v,t){
+  if(v<HOR){let c=mixC([150,196,224],[220,236,244],smooth(0,HOR,v));return mixC(c,[252,240,220],smooth(HOR*0.6,HOR,v)*0.3);}
+  if(v>SAND){let c=mixC([228,208,162],[198,176,132],smooth(SAND,1,v));
+    const wash=SAND+0.02+0.035*Math.sin(t*1.1);if(v<wash)c=mixC(c,[238,246,244],smooth(wash,SAND,v)*0.6);return c;}
+  const depth=(v-HOR)/(SAND-HOR);
+  let c=mixC([42,112,142],[16,68,108],1-depth*0.45);
+  const band=fract(v*8-t*1.2+Math.sin(u*6)*0.1);
+  c=mixC(c,[92,172,182],smooth(0.5,0.82,band)*0.32*depth);
+  if(band<0.1)c=mixC(c,[220,240,240],smooth(0.3,0.9,depth));
+  if(depth>0.8){const f=vnoise(u*28,v*28+t*4);c=mixC(c,[236,246,244],smooth(0.42,0.8,f)*smooth(0.8,1,depth));}
+  return c;
+ };
+}});
+</script></body></html>
