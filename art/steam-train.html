@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Steam Train — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+Art.mount({name:'Steam Train',slug:'steam-train',perspective:'side · L→R, smoke',build:(view,AR)=>{
+ const GY=0.72;
+ return function(u,v,t){
+  let c=mixC([150,186,214],[216,230,236],smooth(0,GY,v));
+  if(v>=GY)c=mixC([122,152,88],[80,112,60],smooth(GY,1,v));
+  if(v>GY+0.075&&v<GY+0.095)c=[66,66,72];
+  const p=fract(t/7.0),x=mix(-0.4,AR+0.4,p),bY=GY-0.015;
+  const stackX=x-0.12;
+  for(let i=0;i<8;i++){const age=fract(t*0.42-i*0.125),sx=stackX-age*0.2,sy=(bY-0.175)-age*0.2,r=0.012+age*0.055;
+    if(Math.hypot(u-sx,v-sy)<r)c=mixC(c,[224,226,232],(1-age)*0.85);}
+  const lx=u-x,ly=v-bY;
+  for(const wx of[-0.14,-0.02,0.1]){const d=Math.hypot(lx-wx,ly);if(d<0.03&&d>0.012)c=[30,30,36];if(d<0.012)c=[120,80,60];
+    if(d<0.03&&d>0.012&&fract((Math.atan2(ly,lx-wx)+x*22)/6.283*6)<0.5)c=[58,58,66];}
+  if(lx>-0.17&&lx<0.06&&ly>-0.085&&ly<-0.008)c=[46,54,72];
+  if(lx>0.0&&Math.hypot(lx-0.06,ly+0.045)<0.042)c=[40,48,64];
+  if(lx>0.0&&lx<0.09&&ly>-0.125&&ly<-0.02)c=[74,50,46];
+  if(lx>0.012&&lx<0.072&&ly>-0.105&&ly<-0.06)c=[160,196,214];
+  if(Math.abs(lx+0.12)<0.02&&ly>-0.175&&ly<-0.085)c=[34,38,50];
+  if(Math.abs(lx+0.12)<0.028&&ly>-0.185&&ly<-0.165)c=[34,38,50];
+  if(Math.hypot(lx+0.05,ly+0.095)<0.02)c=[146,124,72];
+  if(lx>0.06&&lx<0.11&&ly>-0.02&&ly<0.0&&(lx-0.06)<(0.0-ly)*2.2)c=[50,46,44];
+  return c;
+ };
+}});
+</script></body></html>
