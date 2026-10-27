@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Koi Pond — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+const WHITE=[246,247,251],RED=[226,74,30],GOLD=[240,176,54],LGOLD=[252,219,132],
+      ORANGE=[236,120,40],BLACK=[30,28,36],INK=[20,24,30];
+const D_FISH=[
+ {cx:0.78,cy:0.50,rx:0.52,ry:0.33,w:0.20,ph:0.0,L:0.31,BW:0.088,base:WHITE,blobs:[{s:0.55,d:0,rs:0.34,rd:0.95,c:RED},{s:-0.15,d:0.25,rs:0.28,rd:0.8,c:RED},{s:0,d:-0.4,rs:0.18,rd:0.5,c:RED}]},
+ {cx:0.52,cy:0.34,rx:0.34,ry:0.21,w:-0.27,ph:2.1,L:0.25,BW:0.072,base:GOLD,blobs:[{s:0.3,d:0.1,rs:0.5,rd:1.0,c:LGOLD}]},
+ {cx:1.04,cy:0.62,rx:0.31,ry:0.27,w:0.25,ph:4.0,L:0.28,BW:0.082,base:WHITE,blobs:[{s:0.5,d:0,rs:0.33,rd:0.95,c:RED},{s:-0.35,d:-0.1,rs:0.3,rd:0.9,c:BLACK},{s:0.05,d:0.35,rs:0.2,rd:0.55,c:RED}]},
+ {cx:0.40,cy:0.72,rx:0.26,ry:0.17,w:0.31,ph:1.0,L:0.22,BW:0.066,base:ORANGE,blobs:[{s:0.1,d:0,rs:0.4,rd:0.9,c:WHITE},{s:-0.5,d:0,rs:0.3,rd:1.0,c:WHITE}]},
+ {cx:1.12,cy:0.30,rx:0.23,ry:0.18,w:-0.24,ph:3.2,L:0.205,BW:0.060,base:WHITE,blobs:[{s:0.4,d:0.1,rs:0.36,rd:1.0,c:ORANGE},{s:-0.3,d:-0.2,rs:0.24,rd:0.7,c:ORANGE}]},
+];
+const D_PADS=[{x:0.22,y:0.24,r:0.11,a:0.7},{x:1.28,y:0.78,r:0.13,a:2.4},{x:1.33,y:0.2,r:0.085,a:4.0},{x:0.2,y:0.86,r:0.075,a:1.2}];
+const M_FISH=[
+ {cx:0.22,cy:0.26,rx:0.11,ry:0.12,w:0.22,ph:0.0,L:0.22,BW:0.070,base:WHITE,blobs:[{s:0.55,d:0,rs:0.34,rd:0.95,c:RED},{s:-0.15,d:0.25,rs:0.28,rd:0.8,c:RED},{s:0,d:-0.4,rs:0.18,rd:0.5,c:RED}]},
+ {cx:0.25,cy:0.55,rx:0.10,ry:0.11,w:-0.27,ph:2.1,L:0.185,BW:0.058,base:GOLD,blobs:[{s:0.3,d:0.1,rs:0.5,rd:1.0,c:LGOLD}]},
+ {cx:0.19,cy:0.80,rx:0.10,ry:0.10,w:0.25,ph:4.0,L:0.21,BW:0.064,base:WHITE,blobs:[{s:0.5,d:0,rs:0.33,rd:0.95,c:RED},{s:-0.35,d:-0.1,rs:0.3,rd:0.9,c:BLACK},{s:0.05,d:0.35,rs:0.2,rd:0.55,c:RED}]},
+ {cx:0.31,cy:0.40,rx:0.08,ry:0.09,w:0.31,ph:1.0,L:0.16,BW:0.050,base:ORANGE,blobs:[{s:0.1,d:0,rs:0.4,rd:0.9,c:WHITE},{s:-0.5,d:0,rs:0.3,rd:1.0,c:WHITE}]},
+ {cx:0.14,cy:0.10,rx:0.07,ry:0.08,w:-0.24,ph:3.2,L:0.15,BW:0.046,base:WHITE,blobs:[{s:0.4,d:0.1,rs:0.36,rd:1.0,c:ORANGE},{s:-0.3,d:-0.2,rs:0.24,rd:0.7,c:ORANGE}]},
+];
+const M_PADS=[{x:0.07,y:0.13,r:0.085,a:0.7},{x:0.40,y:0.35,r:0.10,a:2.4},{x:0.39,y:0.70,r:0.07,a:4.0},{x:0.09,y:0.90,r:0.065,a:1.2}];
+
+function water(u,v,t){
+  let c=mixC([24,96,98],[11,52,60],v*0.9+0.08);
+  const n=vnoise(u*3.5+t*0.05,v*3.5-t*0.04)*0.6+vnoise(u*7-t*0.08,v*7+t*0.06)*0.4;
+  c=mixC(c,[120,205,196],(n-0.5)*0.22+0.11);
+  const caus=Math.sin((u*9+Math.sin(v*6+t*0.5)*1.4)+t*0.8)*Math.sin(v*8-t*0.4);
+  return mixC(c,[182,240,228],smooth(0.45,1,caus)*0.28);
+}
+function fish(F,u,v,t,bg){
+  const th=F.ph+F.w*t,px=F.cx+F.rx*Math.cos(th),py=F.cy+F.ry*Math.sin(th);
+  const dx0=u-px,dy0=v-py,reach=F.L*0.9; if(dx0*dx0+dy0*dy0>reach*reach)return bg;
+  const head=Math.atan2(F.ry*Math.cos(th),-F.rx*Math.sin(th)),cs=Math.cos(-head),sn=Math.sin(-head);
+  const lx=dx0*cs-dy0*sn,ly=dx0*sn+dy0*cs,half=F.L*0.5,s=lx/half;
+  const taper=Math.pow(clamp((1-s)/2,0,1),1.25),amp=F.BW*0.85*taper,yc=amp*Math.sin(s*1.6-t*4.5+F.ph*2),dy=ly-yc,dn=dy/F.BW;
+  if(s<-1.0&&s>-1.72){const ts=(-s-1.0)/0.72,spread=0.12+ts*1.05,tyc=F.BW*0.95*Math.sin(-1.6-t*4.5+F.ph*2+ts*1.1),tdn=(ly-tyc)/F.BW;
+    if(Math.abs(tdn)<spread){const vein=0.5+0.5*Math.sin(tdn*6),fade=(1-ts)*0.42*(0.55+0.45*vein);return mixC(bg,F.base,clamp(fade,0,0.5));}}
+  if(s<-1.0||s>1.02)return bg;
+  if(s>0.08&&s<0.46&&Math.abs(dn)>0.82&&Math.abs(dn)<1.45){const beat=0.1*Math.sin(t*6+F.ph*3);if(Math.abs(dn)<1.3+beat)return mixC(bg,F.base,0.22);}
+  let hw; if(s>=0)hw=Math.sqrt(clamp(1-s*s,0,1)); else hw=Math.pow(clamp(1+s,0,1),0.62);
+  hw*=(0.78+0.22*smooth(1,0.1,s)); if(Math.abs(dn)>hw)return bg;
+  let col=F.base.slice();
+  for(const b of F.blobs){const q=(s-b.s)/b.rs,r=(dn-b.d)/b.rd;if(q*q+r*r<1)col=b.c;}
+  const shade=1-0.42*(Math.abs(dn)/hw)*(Math.abs(dn)/hw);col=[col[0]*shade,col[1]*shade,col[2]*shade];
+  col=mixC(col,[255,255,255],smooth(0.4,0,Math.abs(dn))*0.12);
+  col=mixC(col,INK,smooth(hw*0.72,hw,Math.abs(dn))*0.5);
+  col=mixC(col,INK,smooth(0.9,1.02,s)*0.4);
+  if(s>0.62&&s<0.82){const ed=Math.abs(dn)-0.52;if(ed>-0.16&&ed<0.16&&Math.abs(dn)<hw)col=[18,18,24];}
+  return col;
+}
+function pad(P,u,v,t,bg){
+  const dx=u-P.x,dy=v-P.y,d=Math.sqrt(dx*dx+dy*dy); if(d>P.r)return bg;
+  let da=Math.atan2(dy,dx)-P.a; da=Math.atan2(Math.sin(da),Math.cos(da)); if(Math.abs(da)<0.32)return bg;
+  const rr=d/P.r; let c=mixC([34,88,46],[18,54,30],rr);
+  c=mixC(c,[96,150,78],smooth(0.7,0.95,Math.sin(Math.atan2(dy,dx)*5+P.a*3))*0.18*(1-rr));
+  const edge=smooth(1,0.86,rr); c=mixC(c,[12,34,22],(1-edge)*0.6);
+  return mixC(bg,c,clamp(edge,0,1)*0.94);
+}
+Art.mount({name:'Koi Pond',slug:'koi',perspective:'aerial · top-down',build:(view,AR)=>{
+  const FISH=view==='mobile'?M_FISH:D_FISH, PADS=view==='mobile'?M_PADS:D_PADS;
+  return function(u,v,t){
+    let c=water(u,v,t);
+    for(let i=0;i<FISH.length;i++)c=fish(FISH[i],u,v,t,c);
+    for(let i=0;i<PADS.length;i++)c=pad(PADS[i],u,v,t,c);
+    const vg=1-0.28*((u/AR-0.5)**2+(v-0.5)**2)*2.4;
+    return [c[0]*vg,c[1]*vg,c[2]*vg];
+  };
+}});
+</script></body></html>
