@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Balloons at Dawn — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+function seg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay;const h=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1e-6),0,1);return Math.hypot(px-(ax+dx*h),py-(ay+dy*h));}
+const COLS=[[228,74,60],[240,170,50],[66,138,200],[92,172,112],[182,92,172]];
+Art.mount({name:'Balloons at Dawn',slug:'balloons-dawn',perspective:'side · slow ascent',build:(view,AR)=>{
+ const GY=0.84,B=view==='mobile'?4:6;
+ return function(u,v,t){
+  let c=mixC([118,150,204],[252,214,178],smooth(0,GY,v));
+  const sd=Math.hypot(u-AR*0.3,v-GY*0.82);c=mixC(c,[255,236,200],smooth(0.32,0,sd)*0.5);if(sd<0.04)c=[255,248,226];
+  if(v>=GY)c=mixC([84,100,106],[52,66,72],smooth(GY,1,v));
+  const hill=GY-0.02-0.02*Math.sin(u*3.2);if(v>hill&&v<GY)c=mixC(c,[96,110,116],0.8);
+  c=mixC(c,[242,232,226],smooth(GY-0.06,GY,v)*smooth(GY+0.08,GY-0.06,v)*0.55);
+  for(let i=0;i<B;i++){const bx=fract(i*0.173+0.1)*AR,rise=fract(t*0.028+i*0.19);
+    const by=mix(GY+0.06,-0.16,rise),ex=bx+Math.sin(t*0.6+i*2)*0.012,r=0.048+(i%3)*0.008;
+    const dx=u-ex,dy=v-by,ey=dy/((dy<0)?1.0:0.62);
+    if(dx*dx/(r*r)+ey*ey/(r*r*1.25)<1&&dy>-r*1.4){
+      const gore=Math.floor((Math.atan2(dx,-dy)/6.283+0.5)*6),col=COLS[(i+gore)%COLS.length];
+      c=mixC(col,[255,255,255],smooth(r*0.6,0,Math.abs(dx))*0.18);}
+    if(Math.abs(dx)<0.013&&dy>r*0.92&&dy<r*0.92+0.02)c=[110,78,48];
+    if(seg(u,v,ex-0.018,by+r*0.7,ex-0.012,by+r*0.92)<0.002)c=[70,58,46];
+    if(seg(u,v,ex+0.018,by+r*0.7,ex+0.012,by+r*0.92)<0.002)c=[70,58,46];}
+  return c;
+ };
+}});
+</script></body></html>
