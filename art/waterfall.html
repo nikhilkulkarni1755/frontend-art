@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Waterfall — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+Art.mount({name:'Waterfall',slug:'waterfall',perspective:'side · fall into pool',build:(view,AR)=>{
+ return function(u,v,t){
+  const L=0.34*AR,R=0.66*AR,poolY=0.82;
+  if(u<L||u>R){let c=mixC([74,78,74],[40,42,40],vnoise(u*14,v*14));
+    if(v<0.24)c=mixC(c,[58,98,54],smooth(0.24,0.04,v)*0.6);
+    c=mixC(c,[26,28,28],smooth(0.6,0.92,vnoise(u*8+3,v*8))*0.3);
+    if((u<L&&u>L-0.02)||(u>R&&u<R+0.02))c=mixC(c,[200,222,232],0.3);
+    return c;}
+  if(v<poolY){let c=mixC([118,168,208],[182,216,236],vnoise(u*28,v*14-t*10));
+    c=mixC(c,[236,246,250],smooth(0.76,1.0,vnoise(u*42,v*22-t*16))*0.85);
+    c=mixC(c,[214,228,238],(smooth(L+0.03,L,u)+smooth(R-0.03,R,u))*0.6);
+    c=mixC(c,[242,248,250],smooth(poolY-0.09,poolY,v)*vnoise(u*22,v*22+t*6)*0.9);
+    return c;}
+  let c=mixC([70,128,156],[30,82,120],smooth(poolY,1,v));
+  const rip=Math.sin(Math.hypot(u-AR*0.5,(v-poolY)*2.2)*42-t*6);
+  c=mixC(c,[206,232,242],smooth(0.5,1,rip)*0.22);
+  c=mixC(c,[244,250,252],smooth(poolY+0.02,poolY-0.03,v)*vnoise(u*20+2,v*20+t*5)*0.7);
+  return c;
+ };
+}});
+</script></body></html>
