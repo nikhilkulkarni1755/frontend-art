@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Chip Traces — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise,hash}=Art;
+Art.mount({name:'Chip Traces',slug:'chip-traces',perspective:'top-down macro · signals',build:(view,AR)=>{
+ const F=18;
+ return function(u,v,t){
+  let c=mixC([14,24,32],[9,15,21],smooth(0,1,v));
+  c=mixC(c,[20,38,48],vnoise(u*34,v*34)*0.14);
+  const gu=fract(u*F),gv=fract(v*F),lineH=gv<0.13,lineV=gu<0.13;
+  if(lineH)c=mixC(c,[44,118,118],0.7);
+  if(lineV)c=mixC(c,[44,118,118],0.7);
+  if(gu<0.22&&gv<0.22&&hash(Math.floor(u*F),Math.floor(v*F))>0.62)c=mixC(c,[200,180,88],0.7);
+  const ri=Math.floor(v*F);
+  if(lineH&&hash(ri,7)>0.42){const dir=hash(ri,3)>0.5?1:-1,pos=fract(t*0.5*dir+hash(ri,9)),pu=pos*AR;
+    c=mixC(c,[176,255,238],smooth(0.045,0,Math.abs(u-pu))*0.95);}
+  const ci=Math.floor(u*F);
+  if(lineV&&hash(ci,11)>0.55){const dir=hash(ci,5)>0.5?1:-1,pos=fract(t*0.45*dir+hash(ci,2));
+    c=mixC(c,[176,255,238],smooth(0.045,0,Math.abs(v-pos))*0.95);}
+  const dcx=AR*0.5,dcy=0.5,r=view==='mobile'?0.19:0.17;
+  if(Math.abs(u-dcx)<r&&Math.abs(v-dcy)<r){
+    if(Math.abs(u-dcx)>r-0.014||Math.abs(v-dcy)>r-0.014)c=[158,146,84];
+    else{c=mixC([32,46,58],[18,28,40],vnoise(u*44,v*44));
+      if(fract(u*44)<0.28&&fract(v*44)<0.28)c=mixC(c,[76,128,138],0.55);
+      if(Math.hypot(u-dcx,v-dcy)<0.03)c=mixC(c,[120,200,200],0.4*(0.5+0.5*Math.sin(t*4)));}}
+  return c;
+ };
+}});
+</script></body></html>
