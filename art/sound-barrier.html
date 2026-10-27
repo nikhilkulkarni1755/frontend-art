@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Sound Barrier — frontend-art</title><script src="../engine.js"></script></head>
+<body><div id="root"></div><script>
+const {clamp,mix,smooth,mixC,fract,vnoise}=Art;
+function seg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay;const h=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1e-6),0,1);return Math.hypot(px-(ax+dx*h),py-(ay+dy*h));}
+Art.mount({name:'Sound Barrier',slug:'sound-barrier',perspective:'side · Mach 1, L→R',build:(view,AR)=>{
+ return function(u,v,t){
+  let c=mixC([86,146,214],[172,204,236],smooth(0,1,v));
+  c=mixC(c,[206,226,244],smooth(0.35,0.95,vnoise(u*1.8+t*0.04,v*2.2))*0.18);
+  const p=fract(t/5.0),x=mix(-0.28,AR+0.28,p),y=0.44;
+  // expanding shock rings trailing behind
+  for(let k=0;k<3;k++){const rp=fract(p*2.4+k/3),rr=rp*0.55,d=Math.abs(Math.hypot(u-(x-0.03),v-y)-rr);
+    if(d<0.012&&u<x-0.01)c=mixC(c,[255,255,255],(1-rp)*0.28);}
+  // Prandtl–Glauert vapour cone behind the jet
+  const dxv=u-(x-0.05),dyv=v-y,coneR=0.016+(-dxv)*0.34;
+  if(dxv<0&&dxv>-0.17&&Math.abs(dyv)<coneR){c=mixC(c,[246,251,255],(1-Math.abs(dyv)/coneR)*smooth(-0.17,-0.02,dxv)*0.85);}
+  // jet dart
+  const lx=u-x,ly=v-y;
+  if(seg(lx,ly,-0.09,0,0.065,0)<0.013){c=ly<0?[96,102,116]:[62,68,80];}
+  if(lx>0.03&&Math.hypot(lx-0.07,ly)<0.016)c=[48,54,66];
+  if(Math.hypot(lx+0.0,ly+0.006)<0.006)c=[150,200,230];
+  if(seg(lx,ly,-0.03,0,-0.085,0.055)<0.006)c=[78,84,96];
+  if(seg(lx,ly,-0.03,0,-0.085,-0.055)<0.006)c=[78,84,96];
+  if(seg(lx,ly,-0.085,0,-0.11,-0.032)<0.006)c=[78,84,96];
+  return c;
+ };
+}});
+</script></body></html>
