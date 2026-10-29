@@ -1,8 +1,15 @@
 # frontend-art
 
-**25 generative pixel-art animations — 100 frontends.**
+**25 generative pixel-art animations — rendered 4 ways, from 2px to 24px pixel boxes.**
 
-Each piece is one continuous, *resolution-independent* scene drawn on a `<canvas>` and sampled onto a **pixel-box grid**. A single pixel-box parameter (`6 / 10 / 16 / 24 px`) re-samples the *same* motion coarser or finer, so each animation ships at four pixel sizes — 25 &times; 4 = **100 frontends**. Every piece has a landscape **desktop** layout, a full-bleed portrait **mobile** layout, and a **website** hero treatment.
+Each piece is one continuous, *resolution-independent* scene drawn on a `<canvas>` and sampled onto a **pixel-box grid**. The design never changes — a single pixel-box parameter re-samples the *same* motion coarser or finer (**2 / 4 / 6 / 10 / 16 / 24 px**), and a post-process **palette grade** repaints it in four coloring styles without touching the artwork. Every piece also has a full-bleed **mobile** layout, a **website hero**, and a **UI-with-text** treatment to check legibility.
+
+| | |
+| --- | --- |
+| Scenes | **25** |
+| Coloring styles | **4** — anime bright · Japanese tapestry · neon · noir (plus natural) |
+| Pixel sizes | **6** — 2 / 4 / 6 / 10 / 16 / 24 px |
+| Layouts | desktop · mobile · website hero · UI text |
 
 Art &amp; code by **Nikhil Kulkarni**.
 
@@ -11,17 +18,120 @@ Open any `art/<slug>.html` in a browser. Query params:
 
 | param | values | effect |
 | --- | --- | --- |
-| `px` | `6` `10` `16` `24` | pixel-box size (default `10`) |
+| `px` | `2` `4` `6` `10` `16` `24` | pixel-box size (default `10`) |
+| `pal` | `anime` `tapestry` `neon` `noir` | coloring style (default natural) |
 | `view` | `mobile` | full-bleed portrait layout |
 | `site` | `1` | website hero-text overlay |
+| `text` | `1` | sample UI text-boxes over the animation |
 
-Example: `art/koi.html?px=16&view=mobile&site=1`
+Example: `art/koi.html?px=4&pal=neon&text=1`
 
-> Stills below are the `10px` build. Videos aren't committed (stored only if need be); regenerate with the capture script.
+> Stills below are the `10px` build unless noted. Videos aren't committed (stored only if need be); regenerate with the capture script.
+
+---
+
+## Coloring styles
+
+The same scene, same motion — only the palette grade changes. (Koi Pond, 10px.)
+
+<table><tr>
+<td width="20%" valign="top"><a href="art/koi.html"><img src="media/koi/koi_10px_desktop.png" width="100%"></a><br><sub><b>natural</b></sub></td>
+<td width="20%" valign="top"><a href="art/koi.html?pal=anime"><img src="media/koi/koi_anime_10px_desktop.png" width="100%"></a><br><sub><b>anime bright</b></sub></td>
+<td width="20%" valign="top"><a href="art/koi.html?pal=tapestry"><img src="media/koi/koi_tapestry_10px_desktop.png" width="100%"></a><br><sub><b>japanese tapestry</b></sub></td>
+<td width="20%" valign="top"><a href="art/koi.html?pal=neon"><img src="media/koi/koi_neon_10px_desktop.png" width="100%"></a><br><sub><b>neon</b></sub></td>
+<td width="20%" valign="top"><a href="art/koi.html?pal=noir"><img src="media/koi/koi_noir_10px_desktop.png" width="100%"></a><br><sub><b>noir</b></sub></td>
+</tr></table>
+
+---
+
+## Every piece × 4 palettes
+
+All 25 scenes in each coloring style (10px desktop). Click any frame to open it live.
+
+<table>
+<tr><th align="left">piece</th><th>Anime bright</th><th>Japanese tapestry</th><th>Neon</th><th>Noir</th></tr>
+<tr><td valign="top"><b>01</b><br>Koi Pond<br><sub>aerial / top-down</sub></td><td width="22%" valign="top"><a href="art/koi.html?pal=anime"><img src="media/koi/koi_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/koi.html?pal=tapestry"><img src="media/koi/koi_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/koi.html?pal=neon"><img src="media/koi/koi_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/koi.html?pal=noir"><img src="media/koi/koi_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>02</b><br>Plane Takeoff<br><sub>side · left&rarr;right, climb-out</sub></td><td width="22%" valign="top"><a href="art/plane-takeoff.html?pal=anime"><img src="media/plane-takeoff/plane-takeoff_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/plane-takeoff.html?pal=tapestry"><img src="media/plane-takeoff/plane-takeoff_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/plane-takeoff.html?pal=neon"><img src="media/plane-takeoff/plane-takeoff_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/plane-takeoff.html?pal=noir"><img src="media/plane-takeoff/plane-takeoff_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>03</b><br>Cheetah Run<br><sub>side · full gallop</sub></td><td width="22%" valign="top"><a href="art/cheetah-run.html?pal=anime"><img src="media/cheetah-run/cheetah-run_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/cheetah-run.html?pal=tapestry"><img src="media/cheetah-run/cheetah-run_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/cheetah-run.html?pal=neon"><img src="media/cheetah-run/cheetah-run_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/cheetah-run.html?pal=noir"><img src="media/cheetah-run/cheetah-run_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>04</b><br>Deer Jump<br><sub>side · arc of the leap</sub></td><td width="22%" valign="top"><a href="art/deer-jump.html?pal=anime"><img src="media/deer-jump/deer-jump_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/deer-jump.html?pal=tapestry"><img src="media/deer-jump/deer-jump_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/deer-jump.html?pal=neon"><img src="media/deer-jump/deer-jump_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/deer-jump.html?pal=noir"><img src="media/deer-jump/deer-jump_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>05</b><br>Penguin Waddle<br><sub>front ¾ · weight shift</sub></td><td width="22%" valign="top"><a href="art/penguin-waddle.html?pal=anime"><img src="media/penguin-waddle/penguin-waddle_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/penguin-waddle.html?pal=tapestry"><img src="media/penguin-waddle/penguin-waddle_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/penguin-waddle.html?pal=neon"><img src="media/penguin-waddle/penguin-waddle_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/penguin-waddle.html?pal=noir"><img src="media/penguin-waddle/penguin-waddle_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>06</b><br>Dolphin Jump<br><sub>side · arc out of water</sub></td><td width="22%" valign="top"><a href="art/dolphin-jump.html?pal=anime"><img src="media/dolphin-jump/dolphin-jump_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/dolphin-jump.html?pal=tapestry"><img src="media/dolphin-jump/dolphin-jump_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/dolphin-jump.html?pal=neon"><img src="media/dolphin-jump/dolphin-jump_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/dolphin-jump.html?pal=noir"><img src="media/dolphin-jump/dolphin-jump_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>07</b><br>Olympic Sprinter<br><sub>side · track</sub></td><td width="22%" valign="top"><a href="art/sprinter.html?pal=anime"><img src="media/sprinter/sprinter_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/sprinter.html?pal=tapestry"><img src="media/sprinter/sprinter_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/sprinter.html?pal=neon"><img src="media/sprinter/sprinter_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/sprinter.html?pal=noir"><img src="media/sprinter/sprinter_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>08</b><br>Sound Barrier<br><sub>side · Mach 1, L&rarr;R</sub></td><td width="22%" valign="top"><a href="art/sound-barrier.html?pal=anime"><img src="media/sound-barrier/sound-barrier_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/sound-barrier.html?pal=tapestry"><img src="media/sound-barrier/sound-barrier_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/sound-barrier.html?pal=neon"><img src="media/sound-barrier/sound-barrier_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/sound-barrier.html?pal=noir"><img src="media/sound-barrier/sound-barrier_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>09</b><br>Motocross Jump<br><sub>side · ramp L&rarr;R</sub></td><td width="22%" valign="top"><a href="art/motocross.html?pal=anime"><img src="media/motocross/motocross_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/motocross.html?pal=tapestry"><img src="media/motocross/motocross_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/motocross.html?pal=neon"><img src="media/motocross/motocross_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/motocross.html?pal=noir"><img src="media/motocross/motocross_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>10</b><br>City Flyover<br><sub>aerial · scrolling map</sub></td><td width="22%" valign="top"><a href="art/city-flyover.html?pal=anime"><img src="media/city-flyover/city-flyover_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/city-flyover.html?pal=tapestry"><img src="media/city-flyover/city-flyover_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/city-flyover.html?pal=neon"><img src="media/city-flyover/city-flyover_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/city-flyover.html?pal=noir"><img src="media/city-flyover/city-flyover_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>11</b><br>Cooking Eggs<br><sub>top-down · frying pan</sub></td><td width="22%" valign="top"><a href="art/cooking-eggs.html?pal=anime"><img src="media/cooking-eggs/cooking-eggs_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/cooking-eggs.html?pal=tapestry"><img src="media/cooking-eggs/cooking-eggs_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/cooking-eggs.html?pal=neon"><img src="media/cooking-eggs/cooking-eggs_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/cooking-eggs.html?pal=noir"><img src="media/cooking-eggs/cooking-eggs_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>12</b><br>Sun Arc<br><sub>side · wide horizon</sub></td><td width="22%" valign="top"><a href="art/sun-arc.html?pal=anime"><img src="media/sun-arc/sun-arc_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/sun-arc.html?pal=tapestry"><img src="media/sun-arc/sun-arc_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/sun-arc.html?pal=neon"><img src="media/sun-arc/sun-arc_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/sun-arc.html?pal=noir"><img src="media/sun-arc/sun-arc_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>13</b><br>Night Sky<br><sub>upward · slow rotation</sub></td><td width="22%" valign="top"><a href="art/stars-night.html?pal=anime"><img src="media/stars-night/stars-night_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/stars-night.html?pal=tapestry"><img src="media/stars-night/stars-night_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/stars-night.html?pal=neon"><img src="media/stars-night/stars-night_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/stars-night.html?pal=noir"><img src="media/stars-night/stars-night_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>14</b><br>Aerial Garden<br><sub>aerial · tended field</sub></td><td width="22%" valign="top"><a href="art/aerial-garden.html?pal=anime"><img src="media/aerial-garden/aerial-garden_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/aerial-garden.html?pal=tapestry"><img src="media/aerial-garden/aerial-garden_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/aerial-garden.html?pal=neon"><img src="media/aerial-garden/aerial-garden_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/aerial-garden.html?pal=noir"><img src="media/aerial-garden/aerial-garden_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>15</b><br>Plant Growth<br><sub>side · seed &rarr; bloom &rarr; seed</sub></td><td width="22%" valign="top"><a href="art/plant-growth.html?pal=anime"><img src="media/plant-growth/plant-growth_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/plant-growth.html?pal=tapestry"><img src="media/plant-growth/plant-growth_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/plant-growth.html?pal=neon"><img src="media/plant-growth/plant-growth_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/plant-growth.html?pal=noir"><img src="media/plant-growth/plant-growth_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>16</b><br>Chip Traces<br><sub>top-down macro · signals</sub></td><td width="22%" valign="top"><a href="art/chip-traces.html?pal=anime"><img src="media/chip-traces/chip-traces_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/chip-traces.html?pal=tapestry"><img src="media/chip-traces/chip-traces_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/chip-traces.html?pal=neon"><img src="media/chip-traces/chip-traces_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/chip-traces.html?pal=noir"><img src="media/chip-traces/chip-traces_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>17</b><br>Day to Night<br><sub>side · day-night cycle</sub></td><td width="22%" valign="top"><a href="art/day-night.html?pal=anime"><img src="media/day-night/day-night_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/day-night.html?pal=tapestry"><img src="media/day-night/day-night_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/day-night.html?pal=neon"><img src="media/day-night/day-night_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/day-night.html?pal=noir"><img src="media/day-night/day-night_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>18</b><br>Ocean Waves<br><sub>side ¾ · break & recede</sub></td><td width="22%" valign="top"><a href="art/ocean-waves.html?pal=anime"><img src="media/ocean-waves/ocean-waves_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/ocean-waves.html?pal=tapestry"><img src="media/ocean-waves/ocean-waves_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/ocean-waves.html?pal=neon"><img src="media/ocean-waves/ocean-waves_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/ocean-waves.html?pal=noir"><img src="media/ocean-waves/ocean-waves_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>19</b><br>Balloons at Dawn<br><sub>side · slow ascent</sub></td><td width="22%" valign="top"><a href="art/balloons-dawn.html?pal=anime"><img src="media/balloons-dawn/balloons-dawn_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/balloons-dawn.html?pal=tapestry"><img src="media/balloons-dawn/balloons-dawn_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/balloons-dawn.html?pal=neon"><img src="media/balloons-dawn/balloons-dawn_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/balloons-dawn.html?pal=noir"><img src="media/balloons-dawn/balloons-dawn_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>20</b><br>Fireworks<br><sub>side · night skyline</sub></td><td width="22%" valign="top"><a href="art/fireworks.html?pal=anime"><img src="media/fireworks/fireworks_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/fireworks.html?pal=tapestry"><img src="media/fireworks/fireworks_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/fireworks.html?pal=neon"><img src="media/fireworks/fireworks_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/fireworks.html?pal=noir"><img src="media/fireworks/fireworks_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>21</b><br>Steam Train<br><sub>side · L&rarr;R, smoke</sub></td><td width="22%" valign="top"><a href="art/steam-train.html?pal=anime"><img src="media/steam-train/steam-train_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/steam-train.html?pal=tapestry"><img src="media/steam-train/steam-train_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/steam-train.html?pal=neon"><img src="media/steam-train/steam-train_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/steam-train.html?pal=noir"><img src="media/steam-train/steam-train_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>22</b><br>Jellyfish Drift<br><sub>side · vertical drift</sub></td><td width="22%" valign="top"><a href="art/jellyfish.html?pal=anime"><img src="media/jellyfish/jellyfish_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/jellyfish.html?pal=tapestry"><img src="media/jellyfish/jellyfish_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/jellyfish.html?pal=neon"><img src="media/jellyfish/jellyfish_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/jellyfish.html?pal=noir"><img src="media/jellyfish/jellyfish_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>23</b><br>Campfire<br><sub>side · flame & embers</sub></td><td width="22%" valign="top"><a href="art/campfire.html?pal=anime"><img src="media/campfire/campfire_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/campfire.html?pal=tapestry"><img src="media/campfire/campfire_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/campfire.html?pal=neon"><img src="media/campfire/campfire_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/campfire.html?pal=noir"><img src="media/campfire/campfire_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>24</b><br>Starling Murmuration<br><sub>wide · flocking at dusk</sub></td><td width="22%" valign="top"><a href="art/murmuration.html?pal=anime"><img src="media/murmuration/murmuration_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/murmuration.html?pal=tapestry"><img src="media/murmuration/murmuration_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/murmuration.html?pal=neon"><img src="media/murmuration/murmuration_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/murmuration.html?pal=noir"><img src="media/murmuration/murmuration_noir_10px_desktop.png" width="100%"></a></td></tr>
+<tr><td valign="top"><b>25</b><br>Waterfall<br><sub>side · fall into pool</sub></td><td width="22%" valign="top"><a href="art/waterfall.html?pal=anime"><img src="media/waterfall/waterfall_anime_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/waterfall.html?pal=tapestry"><img src="media/waterfall/waterfall_tapestry_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/waterfall.html?pal=neon"><img src="media/waterfall/waterfall_neon_10px_desktop.png" width="100%"></a></td><td width="22%" valign="top"><a href="art/waterfall.html?pal=noir"><img src="media/waterfall/waterfall_noir_10px_desktop.png" width="100%"></a></td></tr>
+</table>
+
+---
+
+## Detail — how small can a pixel box go
+
+One scene at every pixel size. At **2px** the grid is fine enough to read almost like a painting; at **24px** the boxes become the subject. (natural palette, desktop)
+
+**01 · Koi Pond** — aerial / top-down
+<table><tr>
+<td width="16%" valign="top"><a href="art/koi.html?px=2"><img src="media/koi/koi_2px_desktop.png" width="100%"></a><br><sub align="center"><b>2px</b></sub></td>
+<td width="16%" valign="top"><a href="art/koi.html?px=4"><img src="media/koi/koi_4px_desktop.png" width="100%"></a><br><sub align="center"><b>4px</b></sub></td>
+<td width="16%" valign="top"><a href="art/koi.html?px=6"><img src="media/koi/koi_6px_desktop.png" width="100%"></a><br><sub align="center"><b>6px</b></sub></td>
+<td width="16%" valign="top"><a href="art/koi.html?px=10"><img src="media/koi/koi_10px_desktop.png" width="100%"></a><br><sub align="center"><b>10px</b></sub></td>
+<td width="16%" valign="top"><a href="art/koi.html?px=16"><img src="media/koi/koi_16px_desktop.png" width="100%"></a><br><sub align="center"><b>16px</b></sub></td>
+<td width="16%" valign="top"><a href="art/koi.html?px=24"><img src="media/koi/koi_24px_desktop.png" width="100%"></a><br><sub align="center"><b>24px</b></sub></td>
+</tr></table>
+
+**03 · Cheetah Run** — side · full gallop
+<table><tr>
+<td width="16%" valign="top"><a href="art/cheetah-run.html?px=2"><img src="media/cheetah-run/cheetah-run_2px_desktop.png" width="100%"></a><br><sub align="center"><b>2px</b></sub></td>
+<td width="16%" valign="top"><a href="art/cheetah-run.html?px=4"><img src="media/cheetah-run/cheetah-run_4px_desktop.png" width="100%"></a><br><sub align="center"><b>4px</b></sub></td>
+<td width="16%" valign="top"><a href="art/cheetah-run.html?px=6"><img src="media/cheetah-run/cheetah-run_6px_desktop.png" width="100%"></a><br><sub align="center"><b>6px</b></sub></td>
+<td width="16%" valign="top"><a href="art/cheetah-run.html?px=10"><img src="media/cheetah-run/cheetah-run_10px_desktop.png" width="100%"></a><br><sub align="center"><b>10px</b></sub></td>
+<td width="16%" valign="top"><a href="art/cheetah-run.html?px=16"><img src="media/cheetah-run/cheetah-run_16px_desktop.png" width="100%"></a><br><sub align="center"><b>16px</b></sub></td>
+<td width="16%" valign="top"><a href="art/cheetah-run.html?px=24"><img src="media/cheetah-run/cheetah-run_24px_desktop.png" width="100%"></a><br><sub align="center"><b>24px</b></sub></td>
+</tr></table>
+
+**10 · City Flyover** — aerial · scrolling map
+<table><tr>
+<td width="16%" valign="top"><a href="art/city-flyover.html?px=2"><img src="media/city-flyover/city-flyover_2px_desktop.png" width="100%"></a><br><sub align="center"><b>2px</b></sub></td>
+<td width="16%" valign="top"><a href="art/city-flyover.html?px=4"><img src="media/city-flyover/city-flyover_4px_desktop.png" width="100%"></a><br><sub align="center"><b>4px</b></sub></td>
+<td width="16%" valign="top"><a href="art/city-flyover.html?px=6"><img src="media/city-flyover/city-flyover_6px_desktop.png" width="100%"></a><br><sub align="center"><b>6px</b></sub></td>
+<td width="16%" valign="top"><a href="art/city-flyover.html?px=10"><img src="media/city-flyover/city-flyover_10px_desktop.png" width="100%"></a><br><sub align="center"><b>10px</b></sub></td>
+<td width="16%" valign="top"><a href="art/city-flyover.html?px=16"><img src="media/city-flyover/city-flyover_16px_desktop.png" width="100%"></a><br><sub align="center"><b>16px</b></sub></td>
+<td width="16%" valign="top"><a href="art/city-flyover.html?px=24"><img src="media/city-flyover/city-flyover_24px_desktop.png" width="100%"></a><br><sub align="center"><b>24px</b></sub></td>
+</tr></table>
+
+
+---
+
+## UI with text
+
+Sample text-boxes — a heading card, an email capture, and status chips — over the live animation, to check how real copy and UI chrome read against each background and palette.
+
+<table><tr>
+<td width="32%" valign="top"><a href="art/koi.html?text=1"><img src="media/koi/koi_text_desktop.png" width="100%"></a><br><sub>Koi · desktop · natural</sub></td>
+<td width="26%" valign="top"><a href="art/koi.html?text=1&view=mobile"><img src="media/koi/koi_text_mobile.png" width="100%"></a><br><sub>Koi · mobile · natural</sub></td>
+<td width="32%" valign="top"><a href="art/city-flyover.html?text=1&pal=neon"><img src="media/city-flyover/city-flyover_text_neon_desktop.png" width="100%"></a><br><sub>City Flyover · neon</sub></td>
+<td width="32%" valign="top"><a href="art/jellyfish.html?text=1&pal=anime"><img src="media/jellyfish/jellyfish_text_anime_desktop.png" width="100%"></a><br><sub>Jellyfish · anime</sub></td>
+</tr></table>
 
 ---
 
 ## Gallery · desktop
+
+Natural palette, 10px.
 
 <table>
 <tr><td width="50%" valign="top"><a href="art/koi.html"><img src="media/koi/koi_10px_desktop.png" width="100%"></a><br><b>01 &middot; Koi Pond</b><br><sub>aerial / top-down</sub></td><td width="50%" valign="top"><a href="art/plane-takeoff.html"><img src="media/plane-takeoff/plane-takeoff_10px_desktop.png" width="100%"></a><br><b>02 &middot; Plane Takeoff</b><br><sub>side · left&rarr;right, climb-out</sub></td></tr>
@@ -41,6 +151,8 @@ Example: `art/koi.html?px=16&view=mobile&site=1`
 
 ## Gallery · mobile
 
+Natural palette, 10px, full-bleed portrait.
+
 <table>
 <tr><td width="25%" valign="top"><a href="art/koi.html?view=mobile"><img src="media/koi/koi_10px_mobile.png" width="100%"></a><br><b>01 &middot; Koi Pond</b></td><td width="25%" valign="top"><a href="art/plane-takeoff.html?view=mobile"><img src="media/plane-takeoff/plane-takeoff_10px_mobile.png" width="100%"></a><br><b>02 &middot; Plane Takeoff</b></td><td width="25%" valign="top"><a href="art/cheetah-run.html?view=mobile"><img src="media/cheetah-run/cheetah-run_10px_mobile.png" width="100%"></a><br><b>03 &middot; Cheetah Run</b></td><td width="25%" valign="top"><a href="art/deer-jump.html?view=mobile"><img src="media/deer-jump/deer-jump_10px_mobile.png" width="100%"></a><br><b>04 &middot; Deer Jump</b></td></tr>
 <tr><td width="25%" valign="top"><a href="art/penguin-waddle.html?view=mobile"><img src="media/penguin-waddle/penguin-waddle_10px_mobile.png" width="100%"></a><br><b>05 &middot; Penguin Waddle</b></td><td width="25%" valign="top"><a href="art/dolphin-jump.html?view=mobile"><img src="media/dolphin-jump/dolphin-jump_10px_mobile.png" width="100%"></a><br><b>06 &middot; Dolphin Jump</b></td><td width="25%" valign="top"><a href="art/sprinter.html?view=mobile"><img src="media/sprinter/sprinter_10px_mobile.png" width="100%"></a><br><b>07 &middot; Olympic Sprinter</b></td><td width="25%" valign="top"><a href="art/sound-barrier.html?view=mobile"><img src="media/sound-barrier/sound-barrier_10px_mobile.png" width="100%"></a><br><b>08 &middot; Sound Barrier</b></td></tr>
@@ -53,4 +165,4 @@ Example: `art/koi.html?px=16&view=mobile&site=1`
 
 ---
 
-<sub>Rendered headless in Chromium (Playwright). Desktop 1280&times;800 @2&times;, mobile 390&times;844 @3&times;.</sub>
+<sub>Rendered headless in Chromium (Playwright). Desktop 1280&times;800 @2&times;, mobile 390&times;844 @3&times;. Palette = post-process grade of the sampled colour, so the design is identical across styles.</sub>
