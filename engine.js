@@ -2,9 +2,13 @@
  * frontend-art — pixel animation engine
  * One continuous, resolution-independent scene sampled onto a
  * pixel-box grid. URL params:
- *   ?px=6|10|16|24   pixel-box size  (default 10)
- *   &view=mobile     full-bleed portrait layout (default desktop)
- *   &site=1          website hero-text overlay (title + byline)
+ *   ?px=2|4|6|10|16|24    pixel-box size  (default 10)
+ *   &view=mobile          full-bleed portrait layout (default desktop)
+ *   &site=1               website hero-text overlay (title + byline)
+ *   &text=1               sample UI text-box overlay (cards + form)
+ *   &pal=anime|tapestry|neon|noir|natural   colour grade (default natural)
+ * The design is never changed — the palette is a post-process grade of
+ * the sampled colour, so one scene ships in several coloring styles.
  * An artwork file just calls Art.mount({ name, slug, perspective, build }).
  * ============================================================ */
 (function () {
@@ -12,6 +16,8 @@
   const PX = Math.max(2, Math.min(48, parseInt(P.get('px') || '10', 10)));
   const VIEW = P.get('view') === 'mobile' ? 'mobile' : 'desktop';
   const SITE = P.get('site') === '1';
+  const TEXT = P.get('text') === '1';
+  const PAL = P.get('pal') || 'natural';
   const W = VIEW === 'mobile' ? 540 : 960;
   const H = VIEW === 'mobile' ? 1170 : 640;
   const AR = W / H;
@@ -30,6 +36,42 @@
     return mix(mix(a, b, u), mix(c, d, u), v);
   }
   function fbm(x, y) { return vnoise(x, y) * 0.6 + vnoise(x * 2.1 + 5.2, y * 2.1 - 1.3) * 0.3 + vnoise(x * 4.3, y * 4.3) * 0.1; }
+
+  // ---------- colour grades (palette = post-process of the sampled colour) ----------
+  const lum = (c) => 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2];
+  const satm = (c, m) => { const l = lum(c); return [l + (c[0] - l) * m, l + (c[1] - l) * m, l + (c[2] - l) * m]; };
+  const cl = (x) => (x < 0 ? 0 : x > 255 ? 255 : x);
+  const TAP = [[26, 28, 40], [46, 64, 104], [150, 70, 52], [198, 152, 76], [226, 210, 178]];
+  function tapRamp(l) { const n = TAP.length - 1, x = clamp(l, 0, 1) * n, i = Math.min(n - 1, Math.floor(x)); return mixC(TAP[i], TAP[i + 1], x - i); }
+  const GRADES = {
+    natural: (c) => c,
+    // anime bright: vivid, value-lifted, lightly cel-posterized, a touch warm
+    anime: (c) => {
+      let g = satm(c, 1.5);
+      g = [255 * Math.pow(cl(g[0]) / 255, 0.80), 255 * Math.pow(cl(g[1]) / 255, 0.80), 255 * Math.pow(cl(g[2]) / 255, 0.80)];
+      const n = 7; g = [Math.round(g[0] / 255 * n) / n * 255, Math.round(g[1] / 255 * n) / n * 255, Math.round(g[2] / 255 * n) / n * 255];
+      return [cl(g[0] * 1.04 + 4), cl(g[1] + 2), cl(g[2] * 0.97)];
+    },
+    // classic Japanese tapestry / ukiyo-e: indigo→vermillion→ochre→paper tonal ramp, muted
+    tapestry: (c) => {
+      const l = lum(c) / 255; let g = tapRamp(l); const m = satm(c, 0.45); g = mixC(g, m, 0.26);
+      return [cl(g[0] + 6), cl(g[1] * 0.98), cl(g[2] * 0.9)];
+    },
+    // neon: crushed shadows, electric saturation, magenta bloom on highlights
+    neon: (c) => {
+      const l = lum(c) / 255; let g = satm(c, 1.8); const k = Math.pow(l, 1.5);
+      g = [g[0] * mix(0.30, 1.2, k) * 1.04, g[1] * mix(0.30, 1.2, k) * 0.92, g[2] * mix(0.30, 1.2, k) * 1.18];
+      if (l > 0.70) { const b = (l - 0.70) / 0.30; g = mixC(g, [255, 120, 235], b * 0.35); }
+      return [cl(g[0]), cl(g[1]), cl(g[2])];
+    },
+    // noir: high-contrast monochrome, cool silver tone
+    noir: (c) => {
+      let l = lum(c) / 255; l = clamp((l - 0.5) * 1.7 + 0.5, 0, 1); l = clamp(l + 0.10 * Math.sin((l - 0.5) * Math.PI), 0, 1);
+      return [cl(l * 236), cl(l * 242), cl(l * 255)];
+    },
+  };
+  const GRADE = GRADES[PAL] || GRADES.natural;
+  const GRADED = PAL !== 'natural' && !!GRADES[PAL];
 
   // ---------- injected presentation ----------
   const CSS = `
@@ -72,13 +114,36 @@
   body[data-view="mobile"] .site nav .links{display:none;}
   body[data-view="mobile"] .site h1{font-size:clamp(40px,12vw,64px);}
   body[data-view="mobile"] .site .hero{padding:24px 22px calc(40px + env(safe-area-inset-bottom));}
+  /* sample UI text-boxes — how real text/chrome reads over the animation */
+  .ui{position:absolute;inset:0;pointer-events:none;border-radius:14px;overflow:hidden;
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+  body[data-view="mobile"] .ui{border-radius:0;}
+  .ui .card{position:absolute;background:rgba(12,16,20,.46);border:1px solid rgba(255,255,255,.14);
+    backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border-radius:16px;color:#f4f7f8;
+    box-shadow:0 12px 34px rgba(0,0,0,.42);}
+  .ui .c-head{left:26px;top:24px;max-width:60%;padding:18px 20px;}
+  .ui .c-head .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#9fe6d8;margin-bottom:9px;}
+  .ui .c-head h2{margin:0 0 9px;font-size:clamp(22px,3.4vw,34px);line-height:1.08;font-weight:650;letter-spacing:-.01em;}
+  .ui .c-head p{margin:0;font-size:13.5px;line-height:1.55;color:#dde6e8;}
+  .ui .c-form{left:26px;bottom:24px;width:min(360px,70%);padding:16px;display:flex;flex-direction:column;gap:11px;}
+  .ui .c-form .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#bcd3cf;}
+  .ui .field{display:flex;gap:8px;}
+  .ui .field input{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:10px;
+    padding:10px 12px;color:#fff;font-size:13px;}
+  .ui .field .btn{background:#8fe3d6;color:#07110f;border:none;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13px;}
+  .ui .chips{position:absolute;right:24px;top:26px;display:flex;gap:8px;flex-direction:column;align-items:flex-end;}
+  .ui .chips .pill{background:rgba(12,16,20,.5);border:1px solid rgba(255,255,255,.16);border-radius:999px;
+    padding:6px 12px;font-size:12px;color:#eaf2f2;backdrop-filter:blur(4px);}
+  body[data-view="mobile"] .ui .c-head{max-width:none;left:22px;right:22px;top:calc(22px + env(safe-area-inset-top));}
+  body[data-view="mobile"] .ui .c-form{left:22px;right:22px;width:auto;bottom:calc(26px + env(safe-area-inset-bottom));}
+  body[data-view="mobile"] .ui .chips{display:none;}
   `;
 
   function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 
   const Art = {
     clamp, mix, smooth, mixC, fract, hash, vnoise, fbm,
-    PX, VIEW, SITE, W, H, AR,
+    PX, VIEW, SITE, TEXT, PAL, W, H, AR,
     mount(opts) {
       const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
       document.body.dataset.view = VIEW;
@@ -89,7 +154,28 @@
       const cols = Math.floor(W / PX), rows = Math.floor(H / PX);
       const sample = opts.build(VIEW, AR);
 
-      if (SITE) {
+      if (TEXT) {
+        const ui = el('div', 'ui');
+        const head = el('div', 'card c-head');
+        head.appendChild(el('div', 'eyebrow', (opts.perspective || '') + ' &middot; ' + PAL));
+        head.appendChild(el('h2', null, opts.name));
+        head.appendChild(el('p', null,
+          'A pixel-box study by <b>Nikhil Kulkarni</b>. Sample copy to show how body text and UI chrome read over a live animated background at this palette and pixel size.'));
+        ui.appendChild(head);
+        const form = el('div', 'card c-form');
+        form.appendChild(el('div', 'lbl', 'Get the collection'));
+        const field = el('div', 'field');
+        const inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = 'you@studio.com'; field.appendChild(inp);
+        field.appendChild(el('button', 'btn', 'Subscribe'));
+        form.appendChild(field);
+        ui.appendChild(form);
+        const chips = el('div', 'chips');
+        chips.appendChild(el('div', 'pill', PAL + ' palette'));
+        chips.appendChild(el('div', 'pill', PX + 'px boxes'));
+        chips.appendChild(el('div', 'pill', cols + '&times;' + rows));
+        ui.appendChild(chips);
+        stage.appendChild(ui);
+      } else if (SITE) {
         const site = el('div', 'site');
         site.appendChild(el('div', 'scrim'));
         const nav = el('nav');
@@ -109,6 +195,7 @@
         hud.appendChild(el('span', 'chip', opts.name.toUpperCase()));
         hud.appendChild(el('span', 'chip', '<b>pixel box </b>' + PX + 'px'));
         hud.appendChild(el('span', 'chip', cols + '×' + rows + ' grid'));
+        if (GRADED) hud.appendChild(el('span', 'chip', '<b>' + PAL + '</b>'));
         stage.appendChild(hud);
       }
 
@@ -124,7 +211,8 @@
           const v = (cy + 0.5) / rows;
           for (let cx = 0; cx < cols; cx++) {
             const u = (cx + 0.5) / cols * AR;
-            const c = sample(u, v, t);
+            let c = sample(u, v, t);
+            if (GRADED) c = GRADE(c);
             data[p++] = c[0]; data[p++] = c[1]; data[p++] = c[2]; data[p++] = 255;
           }
         }
